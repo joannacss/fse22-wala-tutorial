@@ -1,0 +1,12 @@
+digraph "DirectedGraph" {
+graph [concentrate = true];center=true;fontsize=6;node [ color=blue,shape="box"fontsize=6,fontcolor=black,fontname=Arial];edge [ color=black,fontsize=6,fontcolor=black,fontname=Arial]; 
+   "Example5.main([Ljava/lang/String;)V@CallStringContext: [ com.ibm.wala.FakeRootClass.fakeRootMethod()V@5 ]" [ label="Example5.main([Ljava/lang/String;)V@CallStringContext: [ com.ibm.wala.FakeRootClass.fakeRootMethod()V@5 ]"]
+   "Example5.alpha(Ljava/lang/String;)Ljava/lang/String;@CallStringContext: [ Example5.main([Ljava/lang/String;)V@15 ]" [ label="Example5.alpha(Ljava/lang/String;)Ljava/lang/String;@CallStringContext: [ Example5.main([Ljava/lang/String;)V@15 ]"]
+   "Example5.alpha(Ljava/lang/String;)Ljava/lang/String;@CallStringContext: [ Example5.main([Ljava/lang/String;)V@21 ]" [ label="Example5.alpha(Ljava/lang/String;)Ljava/lang/String;@CallStringContext: [ Example5.main([Ljava/lang/String;)V@21 ]"]
+   "Example5.beta(Ljava/lang/String;)Ljava/lang/String;@CallStringContext: [ Example5.alpha(Ljava/lang/String;)Ljava/lang/String;@1 ]" [ label="Example5.beta(Ljava/lang/String;)Ljava/lang/String;@CallStringContext: [ Example5.alpha(Ljava/lang/String;)Ljava/lang/String;@1 ]"]
+ "Example5.main([Ljava/lang/String;)V@CallStringContext: [ com.ibm.wala.FakeRootClass.fakeRootMethod()V@5 ]" -> "Example5.alpha(Ljava/lang/String;)Ljava/lang/String;@CallStringContext: [ Example5.main([Ljava/lang/String;)V@15 ]" 
+ "Example5.main([Ljava/lang/String;)V@CallStringContext: [ com.ibm.wala.FakeRootClass.fakeRootMethod()V@5 ]" -> "Example5.alpha(Ljava/lang/String;)Ljava/lang/String;@CallStringContext: [ Example5.main([Ljava/lang/String;)V@21 ]" 
+ "Example5.alpha(Ljava/lang/String;)Ljava/lang/String;@CallStringContext: [ Example5.main([Ljava/lang/String;)V@15 ]" -> "Example5.beta(Ljava/lang/String;)Ljava/lang/String;@CallStringContext: [ Example5.alpha(Ljava/lang/String;)Ljava/lang/String;@1 ]" 
+ "Example5.alpha(Ljava/lang/String;)Ljava/lang/String;@CallStringContext: [ Example5.main([Ljava/lang/String;)V@21 ]" -> "Example5.beta(Ljava/lang/String;)Ljava/lang/String;@CallStringContext: [ Example5.alpha(Ljava/lang/String;)Ljava/lang/String;@1 ]" 
+
+}
