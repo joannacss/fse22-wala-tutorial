@@ -1,9 +1,0 @@
-digraph "DirectedGraph" {
-graph [concentrate = true];center=true;fontsize=6;node [ color=blue,shape="box"fontsize=6,fontcolor=black,fontname=Arial];edge [ color=black,fontsize=6,fontcolor=black,fontname=Arial]; 
-   "Example5.main([Ljava/lang/String;)V" [ label="Example5.main([Ljava/lang/String;)V"]
-   "Example5.alpha(Ljava/lang/String;)Ljava/lang/String;" [ label="Example5.alpha(Ljava/lang/String;)Ljava/lang/String;"]
-   "Example5.beta(Ljava/lang/String;)Ljava/lang/String;" [ label="Example5.beta(Ljava/lang/String;)Ljava/lang/String;"]
- "Example5.main([Ljava/lang/String;)V" -> "Example5.alpha(Ljava/lang/String;)Ljava/lang/String;" 
- "Example5.alpha(Ljava/lang/String;)Ljava/lang/String;" -> "Example5.beta(Ljava/lang/String;)Ljava/lang/String;" 
-
-}
