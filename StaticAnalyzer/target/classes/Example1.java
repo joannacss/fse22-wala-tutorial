@@ -12,12 +12,7 @@ public class Example1 {
         s.draw();
     }
 }
-/* S1 */ a = b + c + 12;
-/* S1 */ d = a + 1;
-/* S1 */ if(a > 0)
-/* S1 */    System.out.println("Positive");
-
-
+// SSA version:
 //public class Example1 {
 //    public static void main(String[] v1) {
 //        int v3 = 0;

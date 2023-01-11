@@ -5,37 +5,31 @@ import com.ibm.wala.ipa.callgraph.propagation.InstanceKey;
 import com.ibm.wala.ipa.callgraph.propagation.SSAPropagationCallGraphBuilder;
 import com.ibm.wala.ipa.cha.ClassHierarchyFactory;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
-import com.ibm.wala.ipa.slicer.PDG;
-import com.ibm.wala.ipa.slicer.SDG;
-import com.ibm.wala.ipa.slicer.Slicer;
-import com.ibm.wala.ipa.slicer.Statement;
 import com.ibm.wala.types.ClassLoaderReference;
 import com.ibm.wala.util.CancelException;
-import com.ibm.wala.util.WalaException;
 import com.ibm.wala.util.config.AnalysisScopeReader;
 import com.ibm.wala.util.config.FileOfClasses;
 import com.ibm.wala.util.graph.Graph;
 import com.ibm.wala.util.graph.GraphSlicer;
 import com.ibm.wala.viz.DotUtil;
-import com.ibm.wala.viz.NodeDecorator;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
+
+/**
+ * This is a simple example WALA application that uses WALA to build a call graph.
+ * Notice that it analyses binaries (JAR files).
+ */
 public class WalaExample {
-    private static String exFile = "./src/main/resources/Java60RegressionExclusions.txt";
-    private static String jarFile = "./src/main/resources/Example3.jar";
-    private static String runtimeClasses = "./src/main/resources/jdk-17.0.1/rt.jar";
+    private static String EXCLUSION_FILE = "./src/main/resources/Java60RegressionExclusions.txt";
+    private static String JAVA_RUNTIME = "./src/main/resources/jdk-17.0.1/rt.jar";
 
-    private static AnalysisScope createScope() throws IOException {
-
-
+    public static AnalysisScope createScope(String jarFilePath) throws IOException {
         AnalysisScope scope = AnalysisScope.createJavaAnalysisScope();
-        AnalysisScopeReader.addClassPathToScope(runtimeClasses, scope, ClassLoaderReference.Primordial);
-        AnalysisScopeReader.addClassPathToScope(jarFile, scope, ClassLoaderReference.Application);
-        scope.setExclusions(new FileOfClasses(new FileInputStream(exFile)));
+        AnalysisScopeReader.addClassPathToScope(JAVA_RUNTIME, scope, ClassLoaderReference.Primordial);
+        AnalysisScopeReader.addClassPathToScope(jarFilePath, scope, ClassLoaderReference.Application);
+        scope.setExclusions(new FileOfClasses(new FileInputStream(EXCLUSION_FILE)));
         return scope;
     }
 
@@ -55,26 +49,29 @@ public class WalaExample {
         return cgBuilder.makeCallGraph(options, null);
     }
 
-    public static CallGraph buildNCfaCallGraph(AnalysisScope scope, IClassHierarchy classHierarchy, int n) throws CallGraphBuilderCancelException, WalaException {
+    public static CallGraph buildNCfaCallGraph(AnalysisScope scope, IClassHierarchy classHierarchy, int n) throws CallGraphBuilderCancelException {
         AnalysisOptions options = new AnalysisOptions();
         Iterable<Entrypoint> entrypoints = Util.makeMainEntrypoints(scope, classHierarchy);
         options.setEntrypoints(entrypoints);
         AnalysisCache analysisCache = new AnalysisCacheImpl();
-        SSAPropagationCallGraphBuilder cgBuilder = Util.makeNCFABuilder(n, options, analysisCache, classHierarchy, scope);
+        SSAPropagationCallGraphBuilder builder = Util.makeNCFABuilder(n, options, analysisCache, classHierarchy, scope);
 
-        CallGraph cg = cgBuilder.makeCallGraph(options, null);
-        SDG<InstanceKey> sdg = new SDG<>(cg, cgBuilder.getPointerAnalysis(), Slicer.DataDependenceOptions.NO_BASE_NO_HEAP, Slicer.ControlDependenceOptions.NO_EXCEPTIONAL_EDGES);
-        PDG<InstanceKey> pdg = sdg.getPDG(cg.getEntrypointNodes().iterator().next());
-        DotUtil.dotify(GraphSlicer.prune(sdg, WalaExample::test),
-                s -> s.toString(), "sdg-"+jarFile.split("/")[4]+".dot",
-                null,
-                null);
-        return cg;
+
+//        SDG<InstanceKey> sdg = new SDG<>(cg, cgBuilder.getPointerAnalysis(), Slicer.DataDependenceOptions.NO_BASE_NO_HEAP, Slicer.ControlDependenceOptions.NO_EXCEPTIONAL_EDGES);
+//        PDG<InstanceKey> pdg = sdg.getPDG(cg.getEntrypointNodes().iterator().next());
+//        DotUtil.dotify(GraphSlicer.prune(sdg, stmt -> stmt.getNode().getMethod().getDeclaringClass().getClassLoader().getReference().equals(ClassLoaderReference.Application)),
+//                s -> s.toString(), "sdg-"+jarFile.split("/")[4]+".dot",
+//                null,
+//                null);
+        return builder.makeCallGraph(options, null);
     }
 
     public static void main(String[] args) throws Exception {
+        String jarFile = "./src/main/resources/Example3.jar";
+
         // creates analysis scope
-        AnalysisScope scope = createScope();
+        AnalysisScope scope = createScope(jarFile);
+
 
         // creates class hierarchy
         IClassHierarchy classHierarchy = ClassHierarchyFactory.make(scope);
@@ -86,14 +83,13 @@ public class WalaExample {
         // Converts to DOT format
         DotUtil.dotify(chaCallGraph,
                 cgNode -> cgNode.getMethod().getSignature()
-                , "cha-cg-"+jarFile.split("/")[4]+".dot",
+                , "cha-cg-" + jarFile.split("/")[4] + ".dot",
                 null,
                 null);
 
 
-        for(CGNode node: chaCallGraph.getEntrypointNodes()){
+        for (CGNode node : chaCallGraph.getEntrypointNodes()) {
             System.out.println(node.getIR());
-
         }
 
         // RTA
@@ -101,7 +97,7 @@ public class WalaExample {
         Graph<CGNode> prunedRta = GraphSlicer.prune(rtaCallGraph, n -> n.getMethod().getDeclaringClass().getClassLoader().getReference().equals(ClassLoaderReference.Application));
         DotUtil.dotify(prunedRta,
                 cgNode -> cgNode.getMethod().getSignature(),
-                "rta-cg-"+jarFile.split("/")[4]+".dot",
+                "rta-cg-" + jarFile.split("/")[4] + ".dot",
                 null,
                 null);
 
@@ -111,13 +107,11 @@ public class WalaExample {
         Graph<CGNode> prunedCFA = GraphSlicer.prune(oneCFA, n -> n.getMethod().getDeclaringClass().getClassLoader().getReference().equals(ClassLoaderReference.Application));
         DotUtil.dotify(prunedCFA,
                 cgNode -> cgNode.getMethod().getSignature() + "@" + cgNode.getContext(),
-                "1-cfa-cg-"+jarFile.split("/")[4]+".dot",
+                "1-cfa-cg-" + jarFile.split("/")[4] + ".dot",
                 null,
                 null);
 
     }
 
-    private static boolean test(Statement stmt) {
-        return stmt.getNode().getMethod().getDeclaringClass().getClassLoader().getReference().equals(ClassLoaderReference.Application);
-    }
+
 }
