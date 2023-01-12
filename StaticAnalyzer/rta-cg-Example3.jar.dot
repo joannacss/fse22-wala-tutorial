@@ -1,0 +1,8 @@
+digraph "DirectedGraph" {
+graph [concentrate = true];center=true;fontsize=6;node [ color=blue,shape="box"fontsize=6,fontcolor=black,fontname=Arial];edge [ color=black,fontsize=6,fontcolor=black,fontname=Arial]; 
+   "Main.main([Ljava/lang/String;)V" [ label="Main.main([Ljava/lang/String;)V"]
+   "HelloWorld.main([Ljava/lang/String;)V" [ label="HelloWorld.main([Ljava/lang/String;)V"]
+   "Main.increment(I)I" [ label="Main.increment(I)I"]
+ "Main.main([Ljava/lang/String;)V" -> "Main.increment(I)I" 
+
+}

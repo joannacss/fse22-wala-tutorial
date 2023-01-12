@@ -1,0 +1,8 @@
+digraph "DirectedGraph" {
+graph [concentrate = true];center=true;fontsize=6;node [ color=blue,shape="box"fontsize=6,fontcolor=black,fontname=Arial];edge [ color=black,fontsize=6,fontcolor=black,fontname=Arial]; 
+   "Main.main([Ljava/lang/String;)V@CallStringContext: [ com.ibm.wala.FakeRootClass.fakeRootMethod()V@5 ]" [ label="Main.main([Ljava/lang/String;)V@CallStringContext: [ com.ibm.wala.FakeRootClass.fakeRootMethod()V@5 ]"]
+   "HelloWorld.main([Ljava/lang/String;)V@CallStringContext: [ com.ibm.wala.FakeRootClass.fakeRootMethod()V@10 ]" [ label="HelloWorld.main([Ljava/lang/String;)V@CallStringContext: [ com.ibm.wala.FakeRootClass.fakeRootMethod()V@10 ]"]
+   "Main.increment(I)I@CallStringContext: [ Main.main([Ljava/lang/String;)V@9 ]" [ label="Main.increment(I)I@CallStringContext: [ Main.main([Ljava/lang/String;)V@9 ]"]
+ "Main.main([Ljava/lang/String;)V@CallStringContext: [ com.ibm.wala.FakeRootClass.fakeRootMethod()V@5 ]" -> "Main.increment(I)I@CallStringContext: [ Main.main([Ljava/lang/String;)V@9 ]" 
+
+}

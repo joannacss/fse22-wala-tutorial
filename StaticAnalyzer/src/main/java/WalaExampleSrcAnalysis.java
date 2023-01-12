@@ -1,63 +1,42 @@
 import com.ibm.wala.cast.ir.ssa.AstIRFactory;
-import com.ibm.wala.cast.java.client.ECJJavaSourceAnalysisEngine;
-import com.ibm.wala.cast.java.client.JavaSourceAnalysisEngine;
 import com.ibm.wala.cast.java.ipa.callgraph.JavaSourceAnalysisScope;
 import com.ibm.wala.cast.java.translator.jdt.ecj.ECJClassLoaderFactory;
-import com.ibm.wala.cast.loader.AstMethod;
-import com.ibm.wala.classLoader.*;
-import com.ibm.wala.ipa.callgraph.AnalysisScope;
-import com.ibm.wala.ipa.callgraph.CallGraph;
+import com.ibm.wala.classLoader.ClassLoaderFactory;
+import com.ibm.wala.classLoader.JarFileModule;
+import com.ibm.wala.classLoader.SourceFileModule;
+import com.ibm.wala.ipa.callgraph.*;
 import com.ibm.wala.ipa.callgraph.impl.Util;
+import com.ibm.wala.ipa.callgraph.propagation.SSAPropagationCallGraphBuilder;
 import com.ibm.wala.ipa.cha.ClassHierarchyException;
+import com.ibm.wala.ipa.cha.ClassHierarchyFactory;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.ssa.SSAOptions;
 import com.ibm.wala.ssa.SymbolTable;
-import com.ibm.wala.types.ClassLoaderReference;
 import com.ibm.wala.util.CancelException;
-import com.ibm.wala.util.config.AnalysisScopeReader;
 import com.ibm.wala.util.config.FileOfClasses;
-import com.ibm.wala.ipa.callgraph.*;
-import com.ibm.wala.ipa.callgraph.cha.CHACallGraph;
-import com.ibm.wala.ipa.callgraph.impl.Util;
-import com.ibm.wala.ipa.callgraph.propagation.InstanceKey;
-import com.ibm.wala.ipa.callgraph.propagation.SSAPropagationCallGraphBuilder;
-import com.ibm.wala.ipa.cha.ClassHierarchyFactory;
-import com.ibm.wala.ipa.cha.IClassHierarchy;
-import com.ibm.wala.types.ClassLoaderReference;
-import com.ibm.wala.util.CancelException;
-import com.ibm.wala.util.config.AnalysisScopeReader;
-import com.ibm.wala.util.config.FileOfClasses;
-import com.ibm.wala.util.graph.Graph;
-import com.ibm.wala.util.graph.GraphSlicer;
-import com.ibm.wala.viz.DotUtil;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.jar.JarFile;
 
 public class WalaExampleSrcAnalysis {
-    private static String EXCLUSION_FILE = "./src/main/resources/Java60RegressionExclusions.txt";
-    private static String JAVA_RUNTIME = "./src/main/resources/jdk-17.0.1/rt.jar";
 
     public static JavaSourceAnalysisScope createScope(File sourceFile) throws IOException {
         JavaSourceAnalysisScope scope = new JavaSourceAnalysisScope();
         // adds primordial (built-in) classes
-        scope.addToScope(scope.getPrimordialLoader(), new JarFileModule(new JarFile(JAVA_RUNTIME, false)));
+        scope.addToScope(scope.getPrimordialLoader(), new JarFileModule(new JarFile(WalaExample.JAVA_RUNTIME_8, false)));
         // adds application classes (source code)
         scope.addToScope(scope.getSourceLoader(), new SourceFileModule(sourceFile, sourceFile.getName(), null));
         // sets exclusion file
-        scope.setExclusions(new FileOfClasses(new FileInputStream(EXCLUSION_FILE)));
+        scope.setExclusions(new FileOfClasses(new FileInputStream(WalaExample.EXCLUSION_FILE)));
         return scope;
     }
 
 
     public static CallGraph buildNCfaCallGraph(JavaSourceAnalysisScope scope, IClassHierarchy classHierarchy, int n) throws CallGraphBuilderCancelException {
         AnalysisOptions options = new AnalysisOptions();
-options.setAnalysisScope(scope);
+        options.setAnalysisScope(scope);
 
         SSAOptions ssaOptions = new SSAOptions();
         ssaOptions.setDefaultValues(SymbolTable::getDefaultValue);
@@ -93,8 +72,7 @@ options.setAnalysisScope(scope);
 
         System.out.println("Classes: " + classHierarchy.getNumberOfClasses());
         System.out.println(classHierarchy.getScope().toString());
-        CallGraph callGraph = buildNCfaCallGraph(scope, classHierarchy,1);
-        System.out.println(callGraph);
+
 
     }
 }

@@ -22,12 +22,13 @@ import java.io.IOException;
  * Notice that it analyses binaries (JAR files).
  */
 public class WalaExample {
-    private static String EXCLUSION_FILE = "./src/main/resources/Java60RegressionExclusions.txt";
-    private static String JAVA_RUNTIME = "./src/main/resources/jdk-17.0.1/rt.jar";
+    public static String EXCLUSION_FILE = "./src/main/resources/Java60RegressionExclusions.txt";
+    public static String JAVA_RUNTIME_17 = "./src/main/resources/jdk-17.0.1/rt.jar";
+    public static String JAVA_RUNTIME_8 = "./src/main/resources/jre1.8.0_121_debug/lib/rt.jar";
 
     public static AnalysisScope createScope(String jarFilePath) throws IOException {
         AnalysisScope scope = AnalysisScope.createJavaAnalysisScope();
-        AnalysisScopeReader.addClassPathToScope(JAVA_RUNTIME, scope, ClassLoaderReference.Primordial);
+        AnalysisScopeReader.addClassPathToScope(JAVA_RUNTIME_8, scope, ClassLoaderReference.Primordial);
         AnalysisScopeReader.addClassPathToScope(jarFilePath, scope, ClassLoaderReference.Application);
         scope.setExclusions(new FileOfClasses(new FileInputStream(EXCLUSION_FILE)));
         return scope;
