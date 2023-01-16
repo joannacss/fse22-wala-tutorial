@@ -1,4 +1,5 @@
 import com.ibm.wala.cast.ir.ssa.AstIRFactory;
+import com.ibm.wala.cast.java.client.ECJJavaSourceAnalysisEngine;
 import com.ibm.wala.cast.java.ipa.callgraph.JavaSourceAnalysisScope;
 import com.ibm.wala.cast.java.translator.jdt.ecj.ECJClassLoaderFactory;
 import com.ibm.wala.classLoader.ClassLoaderFactory;
@@ -22,10 +23,12 @@ import java.util.jar.JarFile;
 
 public class WalaExampleSrcAnalysis {
 
+
+
     public static JavaSourceAnalysisScope createScope(File sourceFile) throws IOException {
         JavaSourceAnalysisScope scope = new JavaSourceAnalysisScope();
         // adds primordial (built-in) classes
-        scope.addToScope(scope.getPrimordialLoader(), new JarFileModule(new JarFile(WalaExample.JAVA_RUNTIME_8, false)));
+        scope.addToScope(scope.getPrimordialLoader(), new JarFileModule(new JarFile(WalaExample.JAVA_RUNTIME_17, false)));
         // adds application classes (source code)
         scope.addToScope(scope.getSourceLoader(), new SourceFileModule(sourceFile, sourceFile.getName(), null));
         // sets exclusion file
@@ -54,24 +57,24 @@ public class WalaExampleSrcAnalysis {
     public static void main(String[] args) throws IOException, CancelException, ClassHierarchyException {
 
         File project = new File("./src/main/resources/Example1.java");
-//        System.out.println(new File(".").getAbsolutePath());
-//        ECJJavaSourceAnalysisEngine engine = new ECJJavaSourceAnalysisEngine();
-//        engine.addSystemModule(new JarFileModule(new JarFile(JAVA_RUNTIME, false)));
-//        engine.setExclusionsFile(EXCLUSION_FILE);
-//        engine.addSourceModule(new SourceFileModule(project, project.getName(), null));
-//        engine.buildAnalysisScope();
-//        IClassHierarchy cha = engine.buildClassHierarchy();
-//        System.out.println("Classes: " + cha.getNumberOfClasses());
-//        System.out.println(cha.getScope().toString());
+        System.out.println(new File(".").getAbsolutePath());
+        ECJJavaSourceAnalysisEngine engine = new ECJJavaSourceAnalysisEngine();
+        engine.addSystemModule(new JarFileModule(new JarFile(WalaExample.JAVA_RUNTIME_17, false)));
+        engine.setExclusionsFile(WalaExample.EXCLUSION_FILE);
+        engine.addSourceModule(new SourceFileModule(project, project.getName(), null));
+        engine.buildAnalysisScope();
+        IClassHierarchy cha = engine.buildClassHierarchy();
+        System.out.println("Classes: " + cha.getNumberOfClasses());
+        System.out.println(cha.getScope().toString());
 
 
         // creates class hierarchy
-        JavaSourceAnalysisScope scope = createScope(project);
-        ClassLoaderFactory factory = new ECJClassLoaderFactory(scope.getExclusions());
-        IClassHierarchy classHierarchy = ClassHierarchyFactory.make(scope, factory);
-
-        System.out.println("Classes: " + classHierarchy.getNumberOfClasses());
-        System.out.println(classHierarchy.getScope().toString());
+//        JavaSourceAnalysisScope scope = createScope(project);
+//        ClassLoaderFactory factory = new ECJClassLoaderFactory(scope.getExclusions());
+//        IClassHierarchy classHierarchy = ClassHierarchyFactory.make(scope, factory);
+//
+//        System.out.println("Classes: " + classHierarchy.getNumberOfClasses());
+//        System.out.println(classHierarchy.getScope().toString());
 
 
     }
