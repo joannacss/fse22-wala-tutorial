@@ -36,7 +36,6 @@
 
 
         <!-- Eclipse libraries, specify which ones to avoid this error:  https://github.com/wala/WALA/issues/1083 -->
-
         <dependency>
             <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.core.resources</artifactId>
