@@ -7,6 +7,7 @@ import com.ibm.wala.classLoader.JarFileModule;
 import com.ibm.wala.classLoader.SourceFileModule;
 import com.ibm.wala.ipa.callgraph.*;
 import com.ibm.wala.ipa.callgraph.impl.Util;
+import com.ibm.wala.ipa.callgraph.propagation.InstanceKey;
 import com.ibm.wala.ipa.callgraph.propagation.SSAPropagationCallGraphBuilder;
 import com.ibm.wala.ipa.cha.ClassHierarchyException;
 import com.ibm.wala.ipa.cha.ClassHierarchyFactory;
@@ -15,6 +16,7 @@ import com.ibm.wala.ssa.SSAOptions;
 import com.ibm.wala.ssa.SymbolTable;
 import com.ibm.wala.util.CancelException;
 import com.ibm.wala.util.config.FileOfClasses;
+import com.ibm.wala.viz.viewer.WalaViewer;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -66,7 +68,14 @@ public class WalaExampleSrcAnalysis {
         IClassHierarchy cha = engine.buildClassHierarchy();
         System.out.println("Classes: " + cha.getNumberOfClasses());
         System.out.println(cha.getScope().toString());
+//        CallGraph callGraph = engine.buildDefaultCallGraph();
+        CallGraphBuilder<InstanceKey> builder = engine.defaultCallGraphBuilder();
+//        CallGraphBuilder<InstanceKey> builder = engine.defaultCallGraphBuilder();
+//        AnalysisOptions options = engine.getOptions();
 
+        CallGraph callGraph = builder.makeCallGraph(engine.getOptions(), null);
+
+        new WalaViewer(callGraph, builder.getPointerAnalysis());
 
         // creates class hierarchy
 //        JavaSourceAnalysisScope scope = createScope(project);
